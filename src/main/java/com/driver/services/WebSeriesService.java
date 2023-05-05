@@ -20,11 +20,37 @@ public class WebSeriesService {
     public Integer addWebSeries(WebSeriesEntryDto webSeriesEntryDto)throws  Exception{
 
         //Add a webSeries to the database and update the ratings of the productionHouse
-        //Incase the seriesName is already present in the Db throw Exception("Series is already present")
+        //In case the seriesName is already present in the Db throw Exception("Series is already present")
         //use function written in Repository Layer for the same
-        //Dont forget to save the production and webseries Repo
+        //Don't forget to save the production and web series Repo
 
-        return null;
+        WebSeries webSeries = null;
+        webSeries = webSeriesRepository.findBySeriesName(webSeriesEntryDto.getSeriesName());
+        if(webSeries != null)
+            throw new Exception("Series is already present");
+
+        ProductionHouse productionHouse = productionHouseRepository.findById(webSeriesEntryDto.getProductionHouseId()).get();
+
+
+        webSeries = new WebSeries();
+        webSeries.setSeriesName(webSeriesEntryDto.getSeriesName());
+        webSeries.setAgeLimit(webSeriesEntryDto.getAgeLimit());
+        webSeries.setRating(webSeriesEntryDto.getRating());
+        webSeries.setSubscriptionType(webSeriesEntryDto.getSubscriptionType());
+
+
+        double rate = productionHouse.getRatings();
+        rate+=webSeries.getRating();
+        if(productionHouse.getWebSeriesList().size()==1)
+            productionHouse.setRatings(rate);
+        else
+            productionHouse.setRatings(rate/2.0);
+
+        webSeries.setProductionHouse(productionHouse);
+        productionHouse.getWebSeriesList().add(webSeries);
+
+        productionHouseRepository.save(productionHouse);
+        return webSeries.getId();
     }
 
 }
