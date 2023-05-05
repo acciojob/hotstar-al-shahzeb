@@ -45,10 +45,22 @@ public class UserService {
 
         List<WebSeries> webSeries = webSeriesRepository.findAll();
 
-        for(WebSeries webseries : webSeries){
-            if(webseries.getAgeLimit()<=agelimit && webseries.getSubscriptionType().equals(type))
-                cnt++;
+        if(type==SubscriptionType.BASIC) {
+            for (WebSeries webseries : webSeries) {
+                if (webseries.getAgeLimit() <= agelimit && webseries.getSubscriptionType() == SubscriptionType.BASIC)
+                    cnt++;
+            }
         }
+        else if(type == SubscriptionType.PRO){
+            for (WebSeries webseries : webSeries) {
+                if (webseries.getAgeLimit() <= agelimit &&
+                        (webseries.getSubscriptionType() == SubscriptionType.BASIC ||
+                                webseries.getSubscriptionType()==SubscriptionType.PRO))
+                    cnt++;
+            }
+        }
+
+        else cnt=webSeries.size();
         return cnt;
     }
 
