@@ -49,7 +49,7 @@ public class SubscriptionService {
         userRepository.save(user);
 
 
-        return null;
+        return amount;
     }
 
     public Integer upgradeSubscription(Integer userId)throws Exception{
